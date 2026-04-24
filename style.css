@@ -1,67 +1,36 @@
 body {
   margin: 0;
-  height: 100vh;
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  font-family: sans-serif;
+  background: black;
 }
 
-/* Center fixed */
-.scene {
-  width: 300px;
-  height: 300px;
-  perspective: 1200px;
+/* UI */
+.ui {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
 }
 
-/* Rotating circle */
-.carousel {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  animation: spin 30s linear infinite;
+/* Glass effect */
+.glass {
+  margin-top: 10px;
+  padding: 15px;
+  color: white;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  width: 220px;
 }
 
-/* Images */
-.carousel img {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 20px;
-  left: 50%;
-  top: 50%;
-  transform-origin: center center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+button {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
 }
 
-/* 🔥 PERFECT 3D BILLBOARD EFFECT */
-.carousel img:nth-child(1) {
-  transform: rotateY(0deg) translateZ(400px) rotateY(0deg);
-}
-.carousel img:nth-child(2) {
-  transform: rotateY(60deg) translateZ(400px) rotateY(-60deg);
-}
-.carousel img:nth-child(3) {
-  transform: rotateY(120deg) translateZ(400px) rotateY(-120deg);
-}
-.carousel img:nth-child(4) {
-  transform: rotateY(180deg) translateZ(400px) rotateY(-180deg);
-}
-.carousel img:nth-child(5) {
-  transform: rotateY(240deg) translateZ(400px) rotateY(-240deg);
-}
-.carousel img:nth-child(6) {
-  transform: rotateY(300deg) translateZ(400px) rotateY(-300deg);
-}
-
-/* Rotation animation */
-@keyframes spin {
-  0% {
-    transform: rotateY(0deg);
-  }
-  100% {
-    transform: rotateY(360deg);
-  }
+.hidden {
+  display: none;
 }
