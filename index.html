@@ -1,27 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Solar System Final</title>
-  <link rel="stylesheet" href="style.css">
+  <title>TEST</title>
 </head>
-<body>
+<body style="margin:0">
 
-<div class="ui">
-  <button id="toggleCam">🚀 Toggle Mode</button>
-  <div id="info" class="glass hidden"></div>
-  <div id="label" class="label hidden"></div>
-</div>
-
-<audio id="spaceSound" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b7e52.mp3">
-</audio>
-
-<!-- ✅ NO MODULE (IMPORTANT FIX) -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158/examples/js/controls/OrbitControls.js"></script>
 
-<script src="script.js"></script>
+<script>
+console.log("TEST RUNNING");
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// cube
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const cube = new THREE.Mesh(geometry, material);
+
+scene.add(cube);
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  renderer.render(scene, camera);
+}
+
+animate();
+</script>
 
 </body>
 </html>
