@@ -5,134 +5,168 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.158/examples
 const scene = new THREE.Scene();
 
 // Camera
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
-camera.position.set(0, 50, 150);
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 3000);
+camera.position.set(0, 80, 200);
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Controls (zoom + rotate)
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableZoom = true;
+// Controls
+const orbit = new OrbitControls(camera, renderer.domElement);
+let spaceshipMode = false;
 
 // Stars 🌠
-const starsGeometry = new THREE.BufferGeometry();
-const starsCount = 5000;
-const positions = new Float32Array(starsCount * 3);
+const starGeo = new THREE.BufferGeometry();
+const starCount = 8000;
+const pos = new Float32Array(starCount * 3);
 
-for (let i = 0; i < starsCount * 3; i++) {
-  positions[i] = (Math.random() - 0.5) * 2000;
+for (let i = 0; i < pos.length; i++) {
+  pos[i] = (Math.random() - 0.5) * 3000;
 }
 
-starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff });
-const stars = new THREE.Points(starsGeometry, starsMaterial);
+starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff });
+const stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// Texture loader
-const loader = new THREE.TextureLoader();
-
-// Sun ☀️
-const sunGeo = new THREE.SphereGeometry(20, 64, 64);
-const sunMat = new THREE.MeshBasicMaterial({
-  map: loader.load('https://threejsfundamentals.org/threejs/resources/images/sun.jpg')
-});
-const sun = new THREE.Mesh(sunGeo, sunMat);
-scene.add(sun);
-
 // Light
-const light = new THREE.PointLight(0xffffff, 2, 2000);
+const light = new THREE.PointLight(0xffffff, 2, 3000);
 scene.add(light);
 
-// Planet function
-function createPlanet(size, texture, distance) {
+// Loader
+const loader = new THREE.TextureLoader();
+
+// Sun
+const sun = new THREE.Mesh(
+  new THREE.SphereGeometry(25, 64, 64),
+  new THREE.MeshBasicMaterial({
+    map: loader.load('https://threejsfundamentals.org/threejs/resources/images/sun.jpg')
+  })
+);
+scene.add(sun);
+
+// Planet Creator
+function createPlanet(name, size, texture, dist, speed) {
   const geo = new THREE.SphereGeometry(size, 32, 32);
   const mat = new THREE.MeshStandardMaterial({
     map: loader.load(texture)
   });
 
   const mesh = new THREE.Mesh(geo, mat);
+  mesh.userData.name = name;
 
-  const obj = new THREE.Object3D();
-  obj.add(mesh);
-  mesh.position.x = distance;
+  const pivot = new THREE.Object3D();
+  mesh.position.x = dist;
+  pivot.add(mesh);
 
-  scene.add(obj);
+  scene.add(pivot);
 
-  return { mesh, obj };
+  return { mesh, pivot, speed };
 }
 
 // Planets
-const mercury = createPlanet(3, 'https://threejsfundamentals.org/threejs/resources/images/planets/mercury.jpg', 30);
-const venus = createPlanet(5, 'https://threejsfundamentals.org/threejs/resources/images/planets/venus.jpg', 45);
-const earth = createPlanet(6, 'https://threejsfundamentals.org/threejs/resources/images/planets/earth.jpg', 60);
-const mars = createPlanet(4, 'https://threejsfundamentals.org/threejs/resources/images/planets/mars.jpg', 75);
-const jupiter = createPlanet(12, 'https://threejsfundamentals.org/threejs/resources/images/planets/jupiter.jpg', 100);
-const saturn = createPlanet(10, 'https://threejsfundamentals.org/threejs/resources/images/planets/saturn.jpg', 130);
-const uranus = createPlanet(8, 'https://threejsfundamentals.org/threejs/resources/images/planets/uranus.jpg', 160);
-const neptune = createPlanet(8, 'https://threejsfundamentals.org/threejs/resources/images/planets/neptune.jpg', 190);
+const planets = [
+  createPlanet("Mercury", 3, 'https://threejsfundamentals.org/threejs/resources/images/planets/mercury.jpg', 40, 0.02),
+  createPlanet("Venus", 5, 'https://threejsfundamentals.org/threejs/resources/images/planets/venus.jpg', 60, 0.015),
+  createPlanet("Earth", 6, 'https://threejsfundamentals.org/threejs/resources/images/planets/earth.jpg', 80, 0.01),
+  createPlanet("Mars", 4, 'https://threejsfundamentals.org/threejs/resources/images/planets/mars.jpg', 100, 0.008),
+  createPlanet("Jupiter", 12, 'https://threejsfundamentals.org/threejs/resources/images/planets/jupiter.jpg', 140, 0.006),
+  createPlanet("Saturn", 10, 'https://threejsfundamentals.org/threejs/resources/images/planets/saturn.jpg', 180, 0.005),
+  createPlanet("Uranus", 8, 'https://threejsfundamentals.org/threejs/resources/images/planets/uranus.jpg', 220, 0.003),
+  createPlanet("Neptune", 8, 'https://threejsfundamentals.org/threejs/resources/images/planets/neptune.jpg', 260, 0.002),
+];
 
-// Moon 🌙
-const moonGeo = new THREE.SphereGeometry(2, 32, 32);
-const moonMat = new THREE.MeshStandardMaterial({
-  map: loader.load('https://threejsfundamentals.org/threejs/resources/images/moon.jpg')
-});
-const moon = new THREE.Mesh(moonGeo, moonMat);
-
-const moonObj = new THREE.Object3D();
-moon.position.x = 10;
-moonObj.add(moon);
-earth.mesh.add(moonObj);
-
-// Saturn Ring 🪐
-const ringGeo = new THREE.RingGeometry(12, 18, 64);
-const ringMat = new THREE.MeshBasicMaterial({
-  map: loader.load('https://threejsfundamentals.org/threejs/resources/images/saturnringcolor.jpg'),
-  side: THREE.DoubleSide,
-  transparent: true
-});
-const ring = new THREE.Mesh(ringGeo, ringMat);
+// Saturn ring
+const ring = new THREE.Mesh(
+  new THREE.RingGeometry(12, 20, 64),
+  new THREE.MeshBasicMaterial({
+    map: loader.load('https://threejsfundamentals.org/threejs/resources/images/saturnringcolor.jpg'),
+    side: THREE.DoubleSide,
+    transparent: true
+  })
+);
 ring.rotation.x = Math.PI / 2;
-saturn.mesh.add(ring);
+planets[5].mesh.add(ring);
 
-// Animation
+// Moon
+const moon = new THREE.Mesh(
+  new THREE.SphereGeometry(2, 32, 32),
+  new THREE.MeshStandardMaterial({
+    map: loader.load('https://threejsfundamentals.org/threejs/resources/images/moon.jpg')
+  })
+);
+
+const moonPivot = new THREE.Object3D();
+moon.position.x = 10;
+moonPivot.add(moon);
+planets[2].mesh.add(moonPivot);
+
+// Info popup
+const infoBox = document.getElementById("info");
+
+window.addEventListener("click", (e) => {
+  const mouse = new THREE.Vector2(
+    (e.clientX / innerWidth) * 2 - 1,
+    -(e.clientY / innerHeight) * 2 + 1
+  );
+
+  const ray = new THREE.Raycaster();
+  ray.setFromCamera(mouse, camera);
+
+  const intersects = ray.intersectObjects(planets.map(p => p.mesh));
+
+  if (intersects.length > 0) {
+    const name = intersects[0].object.userData.name;
+    infoBox.innerHTML = `<b>${name}</b><br>Beautiful planet in our solar system`;
+    infoBox.classList.remove("hidden");
+  }
+});
+
+// Toggle camera
+document.getElementById("toggleCam").onclick = () => {
+  spaceshipMode = !spaceshipMode;
+};
+
+// Keyboard movement
+const keys = {};
+window.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+// Animate
 function animate() {
   requestAnimationFrame(animate);
 
-  // Self rotation
+  // Orbit
+  planets.forEach(p => {
+    p.pivot.rotation.y += p.speed;
+    p.mesh.rotation.y += 0.01;
+  });
+
+  moonPivot.rotation.y += 0.03;
   sun.rotation.y += 0.002;
-  mercury.mesh.rotation.y += 0.01;
-  venus.mesh.rotation.y += 0.008;
-  earth.mesh.rotation.y += 0.02;
-  mars.mesh.rotation.y += 0.018;
-  jupiter.mesh.rotation.y += 0.04;
-  saturn.mesh.rotation.y += 0.03;
 
-  // Orbit rotation
-  mercury.obj.rotation.y += 0.02;
-  venus.obj.rotation.y += 0.015;
-  earth.obj.rotation.y += 0.01;
-  mars.obj.rotation.y += 0.008;
-  jupiter.obj.rotation.y += 0.006;
-  saturn.obj.rotation.y += 0.005;
-  uranus.obj.rotation.y += 0.003;
-  neptune.obj.rotation.y += 0.002;
+  // Spaceship mode
+  if (spaceshipMode) {
+    orbit.enabled = false;
 
-  // Moon orbit
-  moonObj.rotation.y += 0.03;
+    if (keys['w']) camera.position.z -= 2;
+    if (keys['s']) camera.position.z += 2;
+    if (keys['a']) camera.position.x -= 2;
+    if (keys['d']) camera.position.x += 2;
+  } else {
+    orbit.enabled = true;
+  }
 
-  controls.update();
   renderer.render(scene, camera);
 }
 
 animate();
 
 // Resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth/window.innerHeight;
+window.addEventListener("resize", () => {
+  camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(innerWidth, innerHeight);
 });
