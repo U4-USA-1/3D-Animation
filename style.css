@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: black;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  z-index: 1;
+}
