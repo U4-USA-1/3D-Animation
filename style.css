@@ -5,7 +5,6 @@ body {
   background: black;
 }
 
-/* UI */
 .ui {
   position: fixed;
   top: 20px;
@@ -13,7 +12,6 @@ body {
   z-index: 10;
 }
 
-/* Glass effect */
 .glass {
   margin-top: 10px;
   padding: 15px;
@@ -29,6 +27,13 @@ button {
   border: none;
   cursor: pointer;
   border-radius: 8px;
+}
+
+.label {
+  position: fixed;
+  color: white;
+  font-size: 14px;
+  pointer-events: none;
 }
 
 .hidden {
