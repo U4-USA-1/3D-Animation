@@ -1,48 +1,52 @@
 body {
   margin: 0;
   height: 100vh;
+  background: #000;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
 }
 
-.scene {
+/* Camera view */
+.container {
+  perspective: 1200px;
+}
+
+/* Rotating circle */
+.carousel {
   width: 300px;
   height: 300px;
-  perspective: 1000px;
-}
-
-.circle {
-  width: 100%;
-  height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  animation: rotate 20s linear infinite;
+  animation: spin 25s linear infinite;
 }
 
-.circle img {
+/* Images */
+.carousel img {
   position: absolute;
   width: 180px;
   height: 180px;
   object-fit: cover;
   left: 50%;
   top: 50%;
+  border-radius: 20px;
   transform-origin: center;
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  
+  /* 3D feel */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  transition: transform 0.5s;
 }
 
-/* Position each image in circle */
-.circle img:nth-child(1) { transform: rotateY(0deg) translateZ(300px); }
-.circle img:nth-child(2) { transform: rotateY(60deg) translateZ(300px); }
-.circle img:nth-child(3) { transform: rotateY(120deg) translateZ(300px); }
-.circle img:nth-child(4) { transform: rotateY(180deg) translateZ(300px); }
-.circle img:nth-child(5) { transform: rotateY(240deg) translateZ(300px); }
-.circle img:nth-child(6) { transform: rotateY(300deg) translateZ(300px); }
+/* Circle radius positioning */
+.carousel img:nth-child(1) { transform: rotateY(0deg) translateZ(350px) rotateY(0deg); }
+.carousel img:nth-child(2) { transform: rotateY(60deg) translateZ(350px) rotateY(-60deg); }
+.carousel img:nth-child(3) { transform: rotateY(120deg) translateZ(350px) rotateY(-120deg); }
+.carousel img:nth-child(4) { transform: rotateY(180deg) translateZ(350px) rotateY(-180deg); }
+.carousel img:nth-child(5) { transform: rotateY(240deg) translateZ(350px) rotateY(-240deg); }
+.carousel img:nth-child(6) { transform: rotateY(300deg) translateZ(350px) rotateY(-300deg); }
 
-/* Rotation animation */
-@keyframes rotate {
+/* Rotation */
+@keyframes spin {
   from {
     transform: rotateY(0deg);
   }
